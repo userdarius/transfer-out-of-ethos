@@ -1,8 +1,12 @@
-// @ts-nocheck
-import { useCallback, useEffect, useState } from "react";
-import { ethos, TransactionBlock } from "ethos-connect";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { TransactionBlock, ethos } from "ethos-connect";
 import { SuccessMessage } from ".";
-import { KioskClient, Network, KioskOwnerCap, OwnedKiosks } from "@mysten/kiosk";
+import {
+  KioskClient,
+  KioskOwnerCap,
+  Network,
+  OwnedKiosks,
+} from "@mysten/kiosk";
 import { SuiClient, SuiClientOptions } from "@mysten/sui/client";
 
 const ROOTLET_TYPE =
@@ -21,14 +25,21 @@ const UnlockAndTransferRootlet = () => {
   const { wallet } = ethos.useWallet();
   const [rootletId, setRootletId] = useState<string | null>(null);
 
-  const suiClientOptions: SuiClientOptions = {
-    url: "https://fullnode.mainnet.sui.io:443",
-  };
+  const suiClientOptions: SuiClientOptions = useMemo(
+    () => ({
+      url: "https://fullnode.mainnet.sui.io:443",
+    }),
+    []
+  );
 
-  const kioskClient = new KioskClient({
-    network: Network.MAINNET,
-    client: new SuiClient(suiClientOptions),
-  });
+  const kioskClient = useMemo(
+    () =>
+      new KioskClient({
+        network: Network.MAINNET,
+        client: new SuiClient(suiClientOptions),
+      }),
+    [suiClientOptions]
+  );
 
   const unlockAndTransferRootlet = useCallback(async () => {
     if (!wallet) {
@@ -169,7 +180,7 @@ const UnlockAndTransferRootlet = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [wallet]);
+  }, [wallet, kioskClient, rootletId]);
 
   const reset = useCallback(() => {
     setRootletId(null);

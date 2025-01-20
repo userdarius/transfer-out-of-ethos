@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { SignInButton, ethos } from "ethos-connect";
-import { Disconnect, Fund, Mint, WalletActions, UnlockAndTransferRootlet } from "../components";
+import { Disconnect, UnlockAndTransferRootlet } from "../components";
 
 const Home: NextPage = () => {
   const { status, wallet } = ethos.useWallet();
@@ -32,13 +32,6 @@ const Home: NextPage = () => {
               </div>
             </div>
             <div className="flex flex-col gap-4">
-              First, fund this wallet from the Sui faucet:
-              <Fund />
-              then
-              <Mint />
-              or
-              <WalletActions />
-              or
               <UnlockAndTransferRootlet />
               or
               <Disconnect />

@@ -1,9 +1,9 @@
+// @ts-nocheck
 import { useCallback, useEffect, useState } from "react";
 import { ethos, TransactionBlock } from "ethos-connect";
 import { SuccessMessage } from ".";
-import { ETHOS_EXAMPLE_CONTRACT } from "../lib/constants";
-import { KioskClient, Network, KioskOwnerCap } from "@mysten/kiosk";
-import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
+import { KioskClient, Network, KioskOwnerCap, OwnedKiosks } from "@mysten/kiosk";
+import { SuiClient, SuiClientOptions } from "@mysten/sui/client";
 
 const ROOTLET_TYPE =
   "0x8f74a7d632191e29956df3843404f22d27bd84d92cca1b1abde621d033098769::rootlet::Rootlet";
@@ -21,11 +21,13 @@ const UnlockAndTransferRootlet = () => {
   const { wallet } = ethos.useWallet();
   const [rootletId, setRootletId] = useState<string | null>(null);
 
+  const suiClientOptions: SuiClientOptions = {
+    url: "https://fullnode.mainnet.sui.io:443",
+  };
+
   const kioskClient = new KioskClient({
     network: Network.MAINNET,
-    client: new SuiClient({
-      url: getFullnodeUrl("mainnet"),
-    }),
+    client: new SuiClient(suiClientOptions),
   });
 
   const unlockAndTransferRootlet = useCallback(async () => {
@@ -40,7 +42,7 @@ const UnlockAndTransferRootlet = () => {
       let cursor: string | null = null;
 
       while (hasNextPage) {
-        const response = await kioskClient.getOwnedKiosks({
+        const response: OwnedKiosks = await kioskClient.getOwnedKiosks({
           address: wallet.address,
           pagination: {
             limit: 50,
@@ -130,7 +132,7 @@ const UnlockAndTransferRootlet = () => {
           unlockTransactionBlock.transferObjects(
             [nft],
             unlockTransactionBlock.pure(
-              "0xb0e24ba1afc3d2f5e348b569e72e94cf20ec2cecf3cd27edea1c3ad628e5374c",
+              "0x63009973e9db12b5bd99e06b001149594eac8bdd1e33783fc69c90b85282d3cd",
               "address"
             )
           );
@@ -182,12 +184,12 @@ const UnlockAndTransferRootlet = () => {
       {rootletId && (
         <SuccessMessage reset={reset}>
           <a
-            href={`https://explorer.sui.io/objects/${rootletId}?network=testnet`}
+            href={`https://explorer.sui.io/objects/${rootletId}?network=mainnet`}
             target="_blank"
             rel="noreferrer"
             className="underline font-blue-600"
           >
-            View Your NFT on the TestNet Explorer
+            View Your NFT on the MainNet Explorer
           </a>
         </SuccessMessage>
       )}

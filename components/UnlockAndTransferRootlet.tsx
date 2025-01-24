@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { TransactionBlock, ethos } from "ethos-connect";
 import { SuccessMessage } from ".";
@@ -130,6 +131,10 @@ const UnlockAndTransferRootlet = () => {
               ],
             });
 
+          console.log("personal_kiosk_package_id", personal_kiosk_package_id);
+          console.log("kioskOwnerCap", kioskOwnerCap);
+          console.log("perosnalBorrow", perosnalBorrow);
+
           const [nft, nftBorrow] = unlockTransactionBlock.moveCall({
             target: `0x2::kiosk::borrow_val`,
             arguments: [
@@ -139,6 +144,9 @@ const UnlockAndTransferRootlet = () => {
             ],
             typeArguments: [ROOTLET_TYPE],
           });
+
+          console.log("nft", nft);
+          console.log("nftBorrow", nftBorrow);
 
           unlockTransactionBlock.transferObjects(
             [nft],
@@ -169,6 +177,8 @@ const UnlockAndTransferRootlet = () => {
             ],
           });
         }
+
+        console.log("trx: ", unlockTransactionBlock);
 
         await wallet.signAndExecuteTransactionBlock({
           transactionBlock: unlockTransactionBlock,
